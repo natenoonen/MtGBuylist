@@ -4,6 +4,7 @@ import pycurl
 import sys
 import getopt
 from StringIO import StringIO
+import json
 
 def str2bool(v):
   return v.lower() in ("yes", "true", "t", "1")
@@ -54,8 +55,17 @@ def main(argv):
         c.perform()
         c.close()
         body = buffer.getvalue()
+
+        cardSplit = body.split("$scope.setList =  ")[1].split(";")[0]
+
+        if verbose:
+            print cardSplit
+
+        test = json.loads(cardSplit)
+        if verbose:
+            print test
         print "Parsed {0}".format(currSet)
 
-        
+
 if __name__ == "__main__":
    main(sys.argv[1:])
