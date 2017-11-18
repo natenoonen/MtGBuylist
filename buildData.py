@@ -6,6 +6,11 @@ import getopt
 from StringIO import StringIO
 import json
 
+class MtGCard:
+    price = 0.00
+    name = ""
+    setName = ""
+
 def str2bool(v):
   return v.lower() in ("yes", "true", "t", "1")
 
@@ -44,28 +49,45 @@ def main(argv):
         if "Zendikar_Expeditions" in parsedSet:
             break
 
+    cardPrices = []
     # for foundSet in range(0, len(sets)):
-    for foundSet in range(0, 1):
-        currSet = sets[foundSet]
-        if verbose:
-            print currSet
-        c = pycurl.Curl()
-        c.setopt(c.URL, "http://www.mtgprice.com/spoiler_lists/{0}".format(currSet))
-        c.setopt(c.WRITEDATA, buffer)
-        c.perform()
-        c.close()
-        body = buffer.getvalue()
+    for foundSet in range(0, len(sets)):
+        try:
 
-        cardSplit = body.split("$scope.setList =  ")[1].split(";")[0]
+            buffer = StringIO()
+            currSet = sets[foundSet]
+            if verbose:
+                print currSet
+            if "Foil" in currSet:
+                continue
+            c = pycurl.Curl()
+            c.setopt(c.URL, "http://www.mtgprice.com/spoiler_lists/{0}".format(currSet))
+            c.setopt(c.WRITEDATA, buffer)
+            c.perform()
+            c.close()
+            body = buffer.getvalue()
 
-        if verbose:
-            print cardSplit
+            cardSplit = body.split("$scope.setList =  ")[1].split(";")[0]
 
-        test = json.loads(cardSplit)
-        if verbose:
-            print test
-        print "Parsed {0}".format(currSet)
+            if verbose:
+                print cardSplit
 
+            setCards = json.loads(cardSplit)
+            for cardNumber in range(0, len(setCards)):
+                try:
 
+                    price = float(setCards[cardNumber]['bestVendorBuylistPrice'])
+                    if price > 0:
+                        if "U" in setCards[cardNumber]['rarity']:
+                            print "{0},U,{1},{2}".format(setCards[cardNumber]['setName'], setCards[cardNumber]['name'], setCards[cardNumber]['bestVendorBuylistPrice'])
+                        if "C" in setCards[cardNumber]['rarity']:
+                            print "{0},C,{1},{2}".format(setCards[cardNumber]['setName'], setCards[cardNumber]['name'], setCards[cardNumber]['bestVendorBuylistPrice'])
+                except:
+                    if verbose:
+                        print("Unexpected error:", sys.exc_info()[0])
+            if verbose:
+                print "Parsed {0}".format(currSet)
+        except:
+            print("Unexpected error with {0}:{1}".format(currSet, sys.exc_info()[0]))
 if __name__ == "__main__":
    main(sys.argv[1:])
