@@ -2347,7 +2347,6 @@ Duel Decks Zendikar vs Eldrazi,C,Khalni Heart Expedition,0.05
 Duel Decks Zendikar vs Eldrazi,U,Mind Stone,0.05
 Duel Decks Zendikar vs Eldrazi,U,Pawn of Ulamog,0.05
 Duel Decks Zendikar vs Eldrazi,U,Vampire Nighthawk,0.1
-Unexpected error with Eldritch_Moon:<type 'exceptions.ValueError'>
 Eternal Masters,C,Abundant Growth,0.02
 Eternal Masters,U,Ancestral Mask,0.25
 Eternal Masters,U,Animate Dead,0.75
